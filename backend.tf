@@ -7,3 +7,12 @@ provider "aws" {
   secret_key = var.secret_key
 }
 data "aws_caller_identity" "self" {}
+data "template_file" "buildspec" {
+  template = file("./buildspec.yml")
+  vars = {
+    region         = var.region
+    tag            = "${aws_ecr_repository.app.name}:${var.tag_deploy}"
+    repository_tag = "${aws_ecr_repository.app.repository_url}:${var.tag_deploy}"
+    docker_file    = var.docker_file
+  }
+}

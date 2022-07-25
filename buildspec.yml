@@ -1,0 +1,18 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - echo install step...
+  pre_build:
+    commands:
+      - echo logging in to AWS ECR...
+      - $(aws ecr get-login --no-include-email --region ${region})
+  build:
+    commands:
+      - echo Building the Docker image...
+      - docker build -t ${tag} -f ${docker_file}  .
+      - docker tag ${tag} ${repository_tag}
+  post_build:
+    commands:
+      - echo push latest Docker images to ECR...
+      - docker push ${repository_tag}
